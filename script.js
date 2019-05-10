@@ -1,4 +1,4 @@
-var data = '{"question":[{"title": "What do you choose?","description": "Select all that apply.","type": "checkbox","options":["Option 1","Option 2","Option 3"]},{"title": "Which part of Economics does your busness struggle with?","description": "Select all that apply.","type": "checkbox","options":["We have no problems. Are books are clean, we have lots of cash, and we get everything sent in on time.","Budgeting","Book keeping","Payables","Receivables","Cashflow","Payroll","Insurance","Legal","Taxes"]},{"title": "Name","description": "dkfj","type": "short answer","format":"name"},{"title": "q4","description": "dkfj","type": "checkbox","options":["df","df","df"]},{"title": "q5","description": "dkfj","type": "checkbox","options":["df","df","df"]}]}';
+var data = '{"question":[{"title": "What do you choose?","description": "Select all that apply.","type": "checkbox","options":["Option 1","Option 2","Option 3"]},{"title": "Rate how nice you smell.","description": "1 being the least, 5 the most.","type": "scale","amount":5},{"title": "What\'s your email?","description": "So we can get in touch.","type": "text","format":"email"}]}';
 var current = 0;
 var question = [];
 var progressBar = [
@@ -58,9 +58,13 @@ function buildQuestion(dataIn, index)
     {
         userInput = getCheckboxes(dataIn.options);
     }
-    else if(dataIn.type == "short answer")
+    else if(dataIn.type == "text")
     {
         userInput = getShortAnswer(dataIn.format);
+    }
+    else if(dataIn.type == "scale")
+    {
+        userInput = getScale(dataIn.amount);
     }
     else
     {
@@ -91,8 +95,26 @@ function getCheckboxes(options)
 
 function getShortAnswer(format)
 {
-    var output = document.createElement("h5");
+    var output = document.createElement("H5");
     output.contentEditable = true;
+    return output;
+}
+
+function getScale(amount)
+{
+    var output = document.createElement("DIV");
+    output.className = "scale";
+    var option = [];
+    
+    for(let i = 0; i < amount; i++)
+    {
+        option.push(document.createElement("P"));
+        option[i].appendChild(document.createTextNode((i+1)));
+        option[i].onclick = function() { this.classList.toggle('clicked') };
+        output.appendChild(option[i]);
+    }
+    
+    
     return output;
 }
 
@@ -137,7 +159,7 @@ function previousQuestion()
 function relabelQuestions()
 {
     progressBar[0].style.width = ((current / question.length) * 100) + "%";
-    progressBar[1].innerHTML = ((current / question.length) * 100) + "%";
+    progressBar[1].innerHTML = Math.round((current / question.length) * 100) + "%";
     
     if(current == 0)
     {

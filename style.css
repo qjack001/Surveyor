@@ -262,11 +262,59 @@ h5
 h5:empty::before
 {
     content: "Enter your name here";
-    opacity: 0.3
+    opacity: 0.4
+}
+
+h5.name:empty::before
+{
+    content: "Enter your answer here";
+    opacity: 0.4
+}
+
+h5.email:empty::before
+{
+    content: "Enter your email here";
+    opacity: 0.4
 }
 
 h5:focus
 {
+    border-color: var(--accent);
+}
+
+.scale
+{
+    border: 2px solid;
+    border-radius: 4px;
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(0px, 1fr));
+}
+
+.scale p
+{
+    font-size: 2rem;
+    border-right: 2px solid;
+    text-align: center;
+    margin: 0;
+    cursor: pointer;
+    user-select: none;
+}
+
+.scale p:last-of-type
+{
+    border: none;
+}
+
+.scale p:hover
+{
+    background: rgba(0, 0, 255, 0.1);
+}
+
+.scale p.clicked
+{
+    background: var(--accent);
+    color: white;
     border-color: var(--accent);
 }
 
