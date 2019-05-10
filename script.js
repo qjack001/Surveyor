@@ -1,4 +1,4 @@
-var data = '{"question":[{"title": "q1","description": "dkfj","type": "checkbox","options":["df","df","df"]},{"title": "q2","description": "dkfj","type": "checkbox","options":["df","df","df"]},{"title": "q3","description": "dkfj","type": "checkbox","options":["df","df","df"]},{"title": "q4","description": "dkfj","type": "checkbox","options":["df","df","df"]},{"title": "q5","description": "dkfj","type": "checkbox","options":["df","df","df"]}]}';
+var data = '{"question":[{"title": "What do you choose?","description": "Select all that apply.","type": "checkbox","options":["Option 1","Option 2","Option 3"]},{"title": "Which part of Economics does your busness struggle with?","description": "Select all that apply.","type": "checkbox","options":["We have no problems. Are books are clean, we have lots of cash, and we get everything sent in on time.","Budgeting","Book keeping","Payables","Receivables","Cashflow","Payroll","Insurance","Legal","Taxes"]},{"title": "Name","description": "dkfj","type": "short answer","format":"name"},{"title": "q4","description": "dkfj","type": "checkbox","options":["df","df","df"]},{"title": "q5","description": "dkfj","type": "checkbox","options":["df","df","df"]}]}';
 var current = 0;
 var question = [];
 var progressBar = [
@@ -21,6 +21,9 @@ function importQuestions(input)
     }
 }
 
+/**
+ *  Builds the html question element
+ */
 function buildQuestion(dataIn, index)
 {
     var questionElement = document.createElement("DIV");
@@ -49,11 +52,48 @@ function buildQuestion(dataIn, index)
     descElement.appendChild(descTxt);
     questionElement.appendChild(descElement);
     
+    var userInput;
+    
+    if(dataIn.type == "checkbox")
+    {
+        userInput = getCheckboxes(dataIn.options);
+    }
+    else if(dataIn.type == "short answer")
+    {
+        userInput = getShortAnswer(dataIn.format);
+    }
+    else
+    {
+        userInput = document.createElement("P");
+    }
+    
+    questionElement.appendChild(userInput);
+    
     document.getElementById("content").appendChild(questionElement);
     question.push(questionElement);
+}
+
+function getCheckboxes(options)
+{
+    var output = document.createElement("UL");
+    var option = [];
     
+    for(let i = 0; i < options.length; i++)
+    {
+        option.push(document.createElement("LI"));
+        option[i].appendChild(document.createTextNode(options[i]));
+        option[i].onclick = function() { this.classList.toggle('clicked') };
+        output.appendChild(option[i]);
+    }
     
-    
+    return output;
+}
+
+function getShortAnswer(format)
+{
+    var output = document.createElement("h5");
+    output.contentEditable = true;
+    return output;
 }
 
 /**
