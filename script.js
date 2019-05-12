@@ -1,6 +1,7 @@
 var data = '{"question":[{"title": "What do you choose?","description": "Select all that apply.","type": "checkbox","options":["Option 1","Option 2","Option 3"]},{"title": "Rate how nice you smell.","description": "1 being the least, 5 the most.","type": "scale","amount":5},{"title": "What\'s your email?","description": "So we can get in touch.","type": "text","format":"email"}]}';
 var current = 0;
 var question = [];
+var answer = [];
 var progressBar = [
     document.getElementById("progress-bar"),
     document.getElementById("progress-bar-percent")
@@ -56,15 +57,15 @@ function buildQuestion(dataIn, index)
     
     if(dataIn.type == "checkbox")
     {
-        userInput = getCheckboxes(dataIn.options);
+        userInput = getCheckboxes(dataIn.options, index);
     }
     else if(dataIn.type == "text")
     {
-        userInput = getShortAnswer(dataIn.format);
+        userInput = getShortAnswer(dataIn.format, index);
     }
     else if(dataIn.type == "scale")
     {
-        userInput = getScale(dataIn.amount);
+        userInput = getScale(dataIn.amount, index);
     }
     else
     {
@@ -75,9 +76,10 @@ function buildQuestion(dataIn, index)
     
     document.getElementById("content").appendChild(questionElement);
     question.push(questionElement);
+    answer.push(new Set());
 }
 
-function getCheckboxes(options)
+function getCheckboxes(options, index)
 {
     var output = document.createElement("UL");
     var option = [];
@@ -86,21 +88,50 @@ function getCheckboxes(options)
     {
         option.push(document.createElement("LI"));
         option[i].appendChild(document.createTextNode(options[i]));
-        option[i].onclick = function() { this.classList.toggle('clicked') };
+        option[i].onclick = function() 
+        {
+            this.classList.toggle('clicked');
+            if(answer[index].has(this.innerHTML))
+            {
+                answer[index].delete(this.innerHTML);
+            }
+            else
+            {
+                answer[index].add(this.innerHTML);
+            }
+            
+            
+        };
         output.appendChild(option[i]);
     }
     
     return output;
 }
 
-function getShortAnswer(format)
+function getShortAnswer(format, index)
 {
     var output = document.createElement("H5");
     output.contentEditable = true;
+    
+    var mutationObserver = new MutationObserver(function(mutations) 
+    {
+        answer[index] = new Set([output.innerHTML]);
+    });
+    
+    mutationObserver.observe(output, 
+    {
+        attributes: false,
+        characterData: true,
+        childList: false,
+        subtree: true,
+        attributeOldValue: false,
+        characterDataOldValue: false
+    });
+    
     return output;
 }
 
-function getScale(amount)
+function getScale(amount, index)
 {
     var output = document.createElement("DIV");
     output.className = "scale";
@@ -110,10 +141,20 @@ function getScale(amount)
     {
         option.push(document.createElement("P"));
         option[i].appendChild(document.createTextNode((i+1)));
-        option[i].onclick = function() { this.classList.toggle('clicked') };
+        option[i].onclick = function() 
+        {
+            this.classList.toggle('clicked');
+            answer[index] = new Set([(i + 1)]);
+            for(let j = 0; j < amount; j++)
+            {
+                if(j != i)
+                {
+                    option[j].className = "";
+                }
+            }
+        };
         output.appendChild(option[i]);
     }
-    
     
     return output;
 }
