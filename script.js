@@ -24,18 +24,28 @@ function importQuestions()
 
 function submit()
 {
-    var responseOut = [];
+    var responseOut = {};
+    var obj = JSON.parse(data);
+    
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, '0');
     var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
     var yyyy = today.getFullYear();
+    var unique = "" + Math.floor(Math.random() * 1000)
     
     for(let i = 0; i < answer.length; i++)
     {
         let answerOut = [];
         answer[i].forEach(v => answerOut.push(v));
         
-        responseOut.push({ "question": obj.question[i].title, "answer": answerOut });
+        if(answerOut.length == 1)
+        {
+            responseOut[obj.question[i].title.replace(/\.|\?|\#|\$|\[|\]|\//, "")] = answerOut[0];
+        }
+        else
+        {
+            responseOut[obj.question[i].title.replace(/\.|\?|\#|\$|\[|\]|\//, "")] = answerOut;
+        }
         
     }
     
@@ -47,7 +57,7 @@ function submit()
     firebase.initializeApp(firebaseConfig);
     
     var database = firebase.database();
-    firebase.database().ref(yyyy + "-" + mm + "-" + dd + "/" + Math.floor(Math.random() * 1000)).set(
+    firebase.database().ref(yyyy + "-" + mm + "-" + dd + "/" + unique).set(
     {
         response: responseOut
     });
