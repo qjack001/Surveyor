@@ -262,13 +262,13 @@ h5
 
 h5:empty::before
 {
-    content: "Enter your name here";
+    content: "Enter your answer here";
     opacity: 0.4
 }
 
 h5.name:empty::before
 {
-    content: "Enter your answer here";
+    content: "Enter your name here";
     opacity: 0.4
 }
 

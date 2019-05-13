@@ -7,19 +7,50 @@ var progressBar = [
     document.getElementById("progress-bar-percent")
 ];
 
-importQuestions(data)
+importQuestions()
 
 /**
  *  Parses the data to build the questions
  */
-function importQuestions(input)
+function importQuestions()
 {
-    var obj = JSON.parse(input);
+    var obj = JSON.parse(data);
     
     for(let i = 0; i < obj.question.length; i++)
     {
         buildQuestion(obj.question[i], i);
     }
+}
+
+function submit()
+{
+    var responseOut = [];
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = today.getFullYear();
+    
+    for(let i = 0; i < answer.length; i++)
+    {
+        let answerOut = [];
+        answer[i].forEach(v => answerOut.push(v));
+        
+        responseOut.push({ "question": obj.question[i].title, "answer": answerOut });
+        
+    }
+    
+    var firebaseConfig = 
+    {
+        //enter config data here
+    };
+    
+    firebase.initializeApp(firebaseConfig);
+    
+    var database = firebase.database();
+    firebase.database().ref(yyyy + "-" + mm + "-" + dd + "/" + Math.floor(Math.random() * 1000)).set(
+    {
+        response: responseOut
+    });
 }
 
 /**
@@ -112,6 +143,7 @@ function getShortAnswer(format, index)
 {
     var output = document.createElement("H5");
     output.contentEditable = true;
+    output.className = format;
     
     var mutationObserver = new MutationObserver(function(mutations) 
     {
@@ -166,13 +198,13 @@ function nextQuestion()
 {
     current += 1;
     
-    if(current >= 0 && current < question.length)
+    if(current < question.length)
     {
         relabelQuestions();
     }
     else
     {
-        current -= 1; //undo last action if out of range
+        submit();
     }
 }
 
@@ -183,7 +215,7 @@ function previousQuestion()
 {
     current -= 1;
     
-    if(current >= 0 && current < question.length)
+    if(current >= 0)
     {
         relabelQuestions();
     }
@@ -209,6 +241,15 @@ function relabelQuestions()
     else
     {
         document.getElementById("back-btn").className = "";
+    }
+    
+    if(current == (question.length - 1))
+    {
+        document.getElementById("next-btn").innerHTML = "Submit";
+    }
+    else
+    {
+        document.getElementById("next-btn").innerHTML = "Next";
     }
     
     for(let i = 0; i < question.length; i++)
