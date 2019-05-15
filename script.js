@@ -61,6 +61,17 @@ function submit()
     {
         response: responseOut
     });
+    
+    
+    progressBar[0].style.width = 100 + "%";
+    progressBar[1].style.display = "none";
+    document.getElementById("back-btn").className = "hidden";
+    question[current - 1].className = "prev";
+    
+    var end = document.createElement("DIV");
+    end.className = "popup";
+    end.appendChild(document.createElement("P").appendChild(document.createTextNode("Thank you, your response has been submitted.")));
+    document.getElementById("content").appendChild(end);
 }
 
 /**

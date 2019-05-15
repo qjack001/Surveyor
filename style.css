@@ -319,6 +319,12 @@ h5:focus
     border-color: var(--accent);
 }
 
+.popup
+{
+    text-align: center;
+    padding-top: 200px;
+}
+
 @keyframes click
 {
     0%
